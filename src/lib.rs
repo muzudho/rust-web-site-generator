@@ -1,11 +1,11 @@
 /// バージョン探すなら https://crates.io/
+/// ファイル操作なら https://qiita.com/fujitayy/items/12a80560a356607da637
 extern crate rand;
 use rand::Rng;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
-use std::fs;
-use std::fs::metadata;
-use std::io::{BufWriter, Write};
+use std::fs::{self, File, metadata};
+use std::io::{self, BufReader, BufWriter, Read, Write};
 
 pub fn exists_path(path:&str) -> bool { 
     fs::metadata(path).is_ok()
@@ -25,8 +25,8 @@ pub fn create_dir(path:&str) -> bool {
     }
 }
 
-/// 指定ディレクトリにある、ディレクトリを探す。
-pub fn find_dir(search_path:&str) -> Option<String> {
+/// 指定ディレクトリから、ディレクトリを１つ選ぶ。
+pub fn choose_dir(search_path:&str) -> Option<String> {
     let paths = fs::read_dir(search_path).unwrap();
 
     // ディレクトリを詰め込む☆（＾～＾）
@@ -39,13 +39,32 @@ pub fn find_dir(search_path:&str) -> Option<String> {
         if meta.is_dir() {
             println!("Dir: {}", path_str.display());
             vec.push(path_str);
+        }
+    }
 
-        } else if meta.is_file() {
+    // ランダムに１つ選ぶ。
+    let mut rng = thread_rng();
+    if (*vec).is_empty() {
+        None
+    } else {
+        Some(vec.choose(&mut rng).unwrap().display().to_string())
+    }
+}
+
+/// 指定ディレクトリから、ファイルを１つ選ぶ。
+pub fn choose_file(search_path:&str) -> Option<String> {
+    let paths = fs::read_dir(search_path).unwrap();
+
+    // ディレクトリを詰め込む☆（＾～＾）
+    let mut vec = Vec::new();
+
+    for path in paths {
+        let path_str = path.unwrap().path();
+        let meta = metadata(&path_str).unwrap();
+
+        if meta.is_file() {
             println!("File: {}", path_str.display());
-
-        } else {
-            println!("What: {}", path_str.display());
-
+            vec.push(path_str);
         }
     }
 
@@ -99,4 +118,34 @@ pub fn create_dir_name() -> String {
 
     let name: String = (0..2).map(|_| *rng.choose(&CHARS).unwrap() as char).collect();
     format!("{}", name)
+}
+
+/// ページに文字を書き込む。
+pub fn append_text_to_page(path:&str, text:&str) {
+    let mut content;
+
+    // ファイルを開く。
+    {
+        content = fs::read_to_string(path).unwrap();
+
+        // </body> を探す。
+        match content.find("</body>") {
+            Some(index) => {
+                println!("Body: {}.", index);
+                content.insert_str(index, text);
+            },
+            None => {
+                // 無ければ何もしない。
+                println!("'</body>' は無い☆（＾～＾）");
+                return;
+            }
+        }
+    }
+
+    // ファイルを上書きする。
+    {
+        let mut f = BufWriter::new(fs::File::create(path).unwrap());
+        f.write_all(content.to_string().as_bytes()).unwrap();
+        println!("Write: {}.", path);
+    }
 }

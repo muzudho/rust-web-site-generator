@@ -58,9 +58,22 @@ fn main() {
         }        
 
         // ホームディレクトリの中から１つのディレクトリを選ぶぜ☆（＾～＾）
-        match find_dir(home_dir) {
-            Some(dir) => {
-                println!("Found: {}.", dir);
+        match choose_dir(home_dir) {
+            Some(chose_dir) => {
+                println!("Chose: {}.", chose_dir);
+
+                // ディレクトリの中から１つのファイルを選ぶぜ☆（＾～＾）
+                match choose_file(&chose_dir) {
+                    Some(chose_file) => {
+                        println!("Chose: {}.", chose_file);
+
+                        // そのページに何かを追加☆（＾～＾）
+                        append_text_to_page(&chose_file, "あ\n");
+                    },
+                    None => {
+                        println!("Not found child file.");
+                    }
+                }
             },
             None => {
                 println!("Not found child directory.");
