@@ -36,6 +36,27 @@ fn main() {
             create_new_page(index_html);
         }
 
+        // ランダムなディレクトリ名を考えたいぜ☆（＾～＾）
+        let dir_name = &create_dir_name();
+        let dir_path = &format!("{}/{}", home_dir, dir_name);
+        if !exists_path(dir_path){
+            // ディレクトリが無ければ、作れだぜ☆（＾～＾）
+            if !create_dir(dir_path) {
+                println!("Create '{}' directory fail. bye.", dir_path); 
+                return;
+            }
+        }
+
+        // ランダムなファイル名を考えたいぜ☆（＾～＾）
+        let page_name = &create_page_name();
+
+        // ページを作ろう☆（＾～＾）
+        let new_page_html = &format!("{}/{}", dir_path, page_name);
+        if !exists_path(new_page_html){
+            // そのページが無ければ、作れだぜ☆（＾～＾）
+            create_new_page(new_page_html);
+        }        
+
     } else {
         // 指定のディレクトリがないときは、おとなしく何もしないぜ☆（＾～＾）
         println!("Not found '{}'. bye.", home_dir); 
