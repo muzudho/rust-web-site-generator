@@ -68,7 +68,9 @@ fn main() {
                         println!("Chose: {}.", chose_file);
 
                         // そのページに何かを追加☆（＾～＾）
-                        append_text_to_page(&chose_file, "あ\n");
+                        let relative_path = format!("../{}/{}", dir_name, page_name);
+                        let link = format!("<a href=\"{}\">{}</a>\n", relative_path, relative_path);
+                        append_text_to_page(&chose_file, &link);
                     },
                     None => {
                         println!("Not found child file.");
