@@ -1,0 +1,6 @@
+[package]
+name = "rust_web_site_generator"
+version = "0.1.0"
+authors = ["むずでょ <muzudho1@gmail.com>"]
+
+[dependencies]
