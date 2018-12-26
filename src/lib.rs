@@ -4,8 +4,10 @@ extern crate rand;
 use rand::Rng;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
+use std::str::Chars;
 use std::fs::{self, File, metadata};
 use std::io::{self, BufReader, BufWriter, Read, Write};
+use rand::prelude::IteratorRandom;
 
 pub fn exists_path(path:&str) -> bool { 
     fs::metadata(path).is_ok()
@@ -118,6 +120,15 @@ pub fn create_dir_name() -> String {
 
     let name: String = (0..2).map(|_| *rng.choose(&CHARS).unwrap() as char).collect();
     format!("{}", name)
+}
+
+/// ランダムでひらがなをn文字返す。空白、句読点も含む。
+/// https://qiita.com/Linda_pp/items/d363ceff3c37bc9a4ae6
+pub fn create_hiragana(count:usize) -> String {
+    let v: Vec<char> = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉっゃゅょ、。　".chars().collect();
+    let mut rng = rand::thread_rng();
+    let name: String = (0..count).map(|_| v.choose(&mut rng).unwrap()).collect();
+    name
 }
 
 /// ページに文字を書き込む。

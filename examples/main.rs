@@ -67,10 +67,14 @@ fn main() {
                     Some(chose_file) => {
                         println!("Chose: {}.", chose_file);
 
-                        // そのページに何かを追加☆（＾～＾）
+                        // そのページにリンクを追加☆（＾～＾）
                         let relative_path = format!("../{}/{}", dir_name, page_name);
                         let link = format!("<a href=\"{}\">{}</a>\n", relative_path, relative_path);
                         append_text_to_page(&chose_file, &link);
+
+                        // そのページに、ひらがなを追加☆（＾～＾）
+                        let hiragana = format!("{}", create_hiragana(5));
+                        append_text_to_page(&chose_file, &hiragana);
                     },
                     None => {
                         println!("Not found child file.");
