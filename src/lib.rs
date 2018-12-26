@@ -1,7 +1,10 @@
 /// バージョン探すなら https://crates.io/
 extern crate rand;
 use rand::Rng;
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 use std::fs;
+use std::fs::metadata;
 use std::io::{BufWriter, Write};
 
 pub fn exists_path(path:&str) -> bool { 
@@ -19,6 +22,39 @@ pub fn create_dir(path:&str) -> bool {
             println!("Create: '{}'.", path);
             true
         },
+    }
+}
+
+/// 指定ディレクトリにある、ディレクトリを探す。
+pub fn find_dir(search_path:&str) -> Option<String> {
+    let paths = fs::read_dir(search_path).unwrap();
+
+    // ディレクトリを詰め込む☆（＾～＾）
+    let mut vec = Vec::new();
+
+    for path in paths {
+        let path_str = path.unwrap().path();
+        let meta = metadata(&path_str).unwrap();
+
+        if meta.is_dir() {
+            println!("Dir: {}", path_str.display());
+            vec.push(path_str);
+
+        } else if meta.is_file() {
+            println!("File: {}", path_str.display());
+
+        } else {
+            println!("What: {}", path_str.display());
+
+        }
+    }
+
+    // ランダムに１つ選ぶ。
+    let mut rng = thread_rng();
+    if (*vec).is_empty() {
+        None
+    } else {
+        Some(vec.choose(&mut rng).unwrap().display().to_string())
     }
 }
 

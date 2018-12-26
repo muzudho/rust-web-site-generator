@@ -57,6 +57,16 @@ fn main() {
             create_new_page(new_page_html);
         }        
 
+        // ホームディレクトリの中から１つのディレクトリを選ぶぜ☆（＾～＾）
+        match find_dir(home_dir) {
+            Some(dir) => {
+                println!("Found: {}.", dir);
+            },
+            None => {
+                println!("Not found child directory.");
+            }
+        }
+
     } else {
         // 指定のディレクトリがないときは、おとなしく何もしないぜ☆（＾～＾）
         println!("Not found '{}'. bye.", home_dir); 
